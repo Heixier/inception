@@ -2,21 +2,41 @@ services:
   mariadb:
     build:
       context: ./requirements/mariadb
-    # image: mariadb-alpine-rz
     ports:
       - 3306:3306
     volumes:
       - type: bind
         source: /home/yours/data/mariadb
         target: /var/lib/mysql
+    env_file:
+      - .env
+    restart: always
 
   wordpress:
     build:
       context: ./requirements/wordpress
-    # image: wordpress-alpine-rz
     ports:
       - 9000:9000
     volumes:
       - type: bind
         source: /home/yours/data/wordpress
         target: /usr/share/webapps/wordpress
+    env_file:
+      - .env
+    restart: always
+
+  nginx:
+    build:
+      context: ./requirements/nginx
+    depends_on:
+      wordpress:
+        condition: "service_started"
+    ports:
+      - 443:443
+    volumes:
+      - type: bind
+        source: /home/yours/data/wordpress
+        target: /usr/share/webapps/wordpress
+    env_file:
+      - .env
+    restart: always

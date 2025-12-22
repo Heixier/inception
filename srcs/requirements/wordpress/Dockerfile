@@ -26,6 +26,7 @@ RUN apk update && \
 	apk add php${PHPVER}-zip
 
 RUN ln -sf /usr/sbin/php-fpm${PHPVER} /usr/sbin/php-fpm
+RUN sed -i "s/127.0.0.1:9000/0.0.0.0:9000/" /etc/php${PHPVER}/php-fpm.d/www.conf
 
 COPY init_wordpress.sh .
 RUN chmod +x init_wordpress.sh
