@@ -1,0 +1,22 @@
+services:
+  mariadb:
+    build:
+      context: ./requirements/mariadb
+    # image: mariadb-alpine-rz
+    ports:
+      - 3306:3306
+    volumes:
+      - type: bind
+        source: /home/yours/data/mariadb
+        target: /var/lib/mysql
+
+  wordpress:
+    build:
+      context: ./requirements/wordpress
+    # image: wordpress-alpine-rz
+    ports:
+      - 9000:9000
+    volumes:
+      - type: bind
+        source: /home/yours/data/wordpress
+        target: /usr/share/webapps/wordpress
