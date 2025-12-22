@@ -11,6 +11,7 @@ WORKDIR /app
 
 RUN apk update && \
 	apk upgrade && \
+	apk add curl && \
 	apk add php${PHPVER} &&\
 	apk add php${PHPVER}-fpm &&\
 	apk add php${PHPVER}-json &&\
