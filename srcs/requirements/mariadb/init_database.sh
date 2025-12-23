@@ -13,10 +13,9 @@ create_wpdatabase()
 
 	mariadb --user=root <<-EOSQL #ignore leading tabs
 		CREATE DATABASE wordpress;
-		CREATE USER 'subjectsaysimustaddthisguy'@'%' IDENTIFIED BY "$DB_PASS";
 		CREATE USER "$DB_USER"@'%' IDENTIFIED BY "$DB_PASS";
-		GRANT SELECT ON wordpress.* TO 'subjectsaysimustaddthisguy'@'%';
 		GRANT ALL PRIVILEGES ON wordpress.* TO "$DB_USER"@'%';
+		ALTER USER 'root'@'localhost' IDENTIFIED BY "$DB_PASS";
 		FLUSH PRIVILEGES;
 	EOSQL
 

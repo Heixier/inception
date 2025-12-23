@@ -1,31 +1,40 @@
 services:
   mariadb:
+    networks:
+      - inception
     build:
       context: ./requirements/mariadb
     ports:
       - 3306:3306
     volumes:
-      - type: bind
-        source: /home/yours/data/mariadb
-        target: /var/lib/mysql
+      - db:/var/lib/mysql
     env_file:
       - .env
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb -uroot -p$$DB_PASS -e 'SELECT 1' || exit 1"]
+      interval: 2s
+      timeout: 10s
 
   wordpress:
+    networks:
+      - inception
     build:
       context: ./requirements/wordpress
+    depends_on:
+      mariadb:
+        condition: "service_healthy"
     ports:
       - 9000:9000
     volumes:
-      - type: bind
-        source: /home/yours/data/wordpress
-        target: /usr/share/webapps/wordpress
+      - wp:/usr/share/webapps/wordpress
     env_file:
       - .env
     restart: always
 
   nginx:
+    networks:
+      - inception
     build:
       context: ./requirements/nginx
     depends_on:
@@ -34,9 +43,26 @@ services:
     ports:
       - 443:443
     volumes:
-      - type: bind
-        source: /home/yours/data/wordpress
-        target: /usr/share/webapps/wordpress
+      - wp:/usr/share/webapps/wordpress
     env_file:
       - .env
     restart: always
+
+networks:
+  inception:
+    driver: bridge
+
+volumes:
+  db:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$VOLUMES_PATH/mariadb"
+      o: bind
+
+  wp:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$VOLUMES_PATH/wordpress"
+      o: bind
