@@ -4,8 +4,6 @@ services:
       - inception
     build:
       context: ./requirements/mariadb
-    ports:
-      - 3306:3306
     volumes:
       - db:/var/lib/mysql
     env_file:
@@ -24,8 +22,6 @@ services:
     depends_on:
       mariadb:
         condition: "service_healthy"
-    ports:
-      - 9000:9000
     volumes:
       - wp:/usr/share/webapps/wordpress
     env_file:
