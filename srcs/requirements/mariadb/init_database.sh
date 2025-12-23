@@ -1,7 +1,6 @@
 #!/bin/sh
 
 DATA_DIR='/var/lib/mysql'
-DB_RUNNING=0
 
 create_wpdatabase()
 {
