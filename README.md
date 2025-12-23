@@ -6,7 +6,7 @@ This project is about creating a group of docker containers that collectively ru
 
 ## Virtual Machines vs Docker
 
-Virtual machines virtualise all the hardware and is thus much slower than docker which only virtualises the operating system. You can spam a lot more docker containers than minimal debian servers in VMWare Workstation Pro.
+Virtual machines virtualise the kernel layer of the operating system and is thus much slower than docker which only virtualises the application of the operating system, which is a layer above the kernel layer and much more lightweight.
 
 ## Secrets vs Environment Variables
 
@@ -56,6 +56,7 @@ https://www.youtube.com/watch?v=SXwC9fSwct8
 https://superuser.com/questions/352289/bash-scripting-test-for-empty-directory
 https://youtu.be/bKFMS5C4CG0?si=t6XwTE0eTTb1fYuq
 https://www.youtube.com/watch?v=BN8lMesmvPw
+https://www.techworld-with-nana.com/post/docker-vs-virtual-machine
 ```
 
 AI therapy was leveraged to validate my negative sentiments against 42 subject creators and the classic "here's this random thing we didn't clarify in the subject I guess you fail now" jumpscare characteristic of 42 evaluations.
