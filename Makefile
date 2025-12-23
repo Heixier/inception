@@ -15,13 +15,4 @@ stop:
 
 restart: stop start
 
-clean:
-	docker compose -f $(DOCKER_COMPOSE) down -v
-
-fclean: clean
-	rm -rf $(DB_PATH)
-	rm -rf $(WP_PATH)
-
-re: fclean all
-
-.PHONY: start stop restart clean fclean re
+.PHONY: start stop restart 
