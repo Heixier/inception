@@ -57,3 +57,5 @@ https://superuser.com/questions/352289/bash-scripting-test-for-empty-directory
 https://youtu.be/bKFMS5C4CG0?si=t6XwTE0eTTb1fYuq
 https://www.youtube.com/watch?v=BN8lMesmvPw
 ```
+
+AI therapy was leveraged to validate my negative sentiments against 42 subject creators and the classic "here's this random thing we didn't clarify in the subject I guess you fail now" jumpscare characteristic of 42 evaluations.
