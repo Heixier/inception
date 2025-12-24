@@ -4,6 +4,7 @@ services:
       - inception
     build:
       context: ./requirements/mariadb
+    image: mariadb
     volumes:
       - db:/var/lib/mysql
     env_file:
@@ -19,6 +20,7 @@ services:
       - inception
     build:
       context: ./requirements/wordpress
+    image: wordpress
     depends_on:
       mariadb:
         condition: "service_healthy"
@@ -33,6 +35,7 @@ services:
       - inception
     build:
       context: ./requirements/nginx
+    image: nginx
     depends_on:
       wordpress:
         condition: "service_started"
@@ -56,10 +59,12 @@ services:
 
 networks:
   inception:
+    name: inception
     driver: bridge
 
 volumes:
   db:
+    name: db
     driver: local
     driver_opts:
       type: none
@@ -67,6 +72,7 @@ volumes:
       o: bind
 
   wp:
+    name: wp
     driver: local
     driver_opts:
       type: none

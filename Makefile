@@ -13,6 +13,9 @@ start:
 stop:
 	docker compose -f $(DOCKER_COMPOSE) down
 
+clean:
+	docker compose -f $(DOCKER_COMPOSE) down -v
+
 restart: stop start
 
-.PHONY: start stop restart 
+.PHONY: start stop clean restart 

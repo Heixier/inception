@@ -1,62 +1,71 @@
-This project has been created as part of the 42 curriculum by rsiah.
-
 # Description
 
 This project is about creating a group of docker containers that collectively run a Wordpress website, each responsible for a specific service.
 
-## Virtual Machines vs Docker
+# Post evaluation clarity
 
-Virtual machines virtualise the kernel layer of the operating system and is thus much slower than docker which only virtualises the application of the operating system, which is a layer above the kernel layer and much more lightweight.
+There were were many "jumpscares" in the evaluation sheet, basically failing people instantly if they failed to italicise one line, or didn't implement their mind-reading skills to implement volumes in the way that they telepathically want, or prepare to change ports on the spot despite configuration flexibility not being stated at all. Good luck with changing the 443 port for nginx on the spot with no preparation and no warnings beforehand! Hint: `https://` defaults to 443, so make sure you change your website name! Better hint: you won't fail the project if you fail this literally not in the subject requirements section, but none of the bonus will be evaluated so there goes all your efforts as well!
 
-## Secrets vs Environment Variables
+Basically, anyone who followed the subject requirements properly has a good chance of failing because this project involves mind reading as well. I recommend just submitting this project blindly just to see what the evaluation criteria is, before even starting the project, in order to not waste time on hidden requirements designed to "gotcha!" you for no reason other than to discourage you from learning and make you feel bad.
 
-The decision to use one over the other is literally a long-standing debate in the devops community so just keep it in mind, but both serve to store credentials, sensitive information, and other variables the containers may need. Secrets are stored in a `secrets/` folder while environment variables are stored in a `.env` file. For this project, I'm just using an `.env` file so you can probably guess which side of the debate I'm on given the scope of this project.
+Docker and docker compose can be incredibly fun and rewarding to learn. Please do not let 42 discourage you from learning and using it in your everyday life!
 
-## Docker Network vs Host Network
+# Changing ports
 
-A docker network is an isolated network, there's an internal DNS resolver that helps them talk to each other. In order to get a connection to the outside world, you need to map the port, e.g. in our nginx case 443 is exposed to the outside world (oh no). The host network is just... host. It's the host machine's IP address and ports. There's no separation of networks. Imagine if you installed mariadb in the host machine and it binds to 3306 on startup, then you can't even run the mariadb docker container anymore because you're already using that port and you panic uninstall mariadb not based on a real story (the real story was exposing the port by accident).
+I recommended using the .env file to set all your ports manually beforehand in order to make changing it as simple as changing the corresponding port in .env
 
-## Docker Volumes vs Bind Mounts
+## Mariadb
 
-Docker volumes are owned and managed by docker, bind mounts are mine, you can specify the mount location to be whereever you want it to be and makes it a lot easier for the host machine to see what's going on in the filesystem.
-
-# Instructions
-
-## Make commands
-
-`make` or `make start`: starts all containers
-`make stop`: stops all running containers
-`make clean`: stops all running containers and removes their volumes
-`make fclean`: stops all running containers and deletes all data
-
-## Accessing the website
-
-Navigate to `http://rsiah.42.fr`. Because HTTP is disabled, modern browsers will automatically redirect to `https://rsiah.42.fr`.
-
-## Logging in
-
-Navigate to `rsiah.42.fr/wp-admin` and enter the credentials specified in the .env file I typed out in front of you earlier.
-
-You can then click on a post and leave a comment on the default Hello World post. Then, log in to the admin user using the credentials from the same .env file, and approve the comment.
-
-# Resources
-
-A ton of browsing through forums and reading documentation. There's far too much to link to, so I've put down a few random links from the 100 tabs I have open.
+Edit the `[mysqld]` section inside /etc/my.cnf.d/mariadb-server.cnf, or have it prepared beforehand. You can use any method you prefer, even including the entire `.conf` file if you want. Or use sed with the append flag, find the `[mysqld]` line and append `port=$DB_PORT` to the line after it.
 
 ```
-https://nginx.org/en/docs/beginners_guide.html
-https://wp-cli.org/
-https://stackoverflow.com/questions/10175812/how-can-i-generate-a-self-signed-ssl-certificate-using-openssl
-https://make.wordpress.org/hosting/handbook/server-environment/
-https://developer.wordpress.org/cli/commands/user/
-https://last9.io/blog/docker-compose-health-checks/
-https://devops.stackexchange.com/questions/11501/healthcheck-cmd-vs-cmd-shell
-https://docs.docker.com/reference/cli/docker/compose/up/
-https://www.youtube.com/watch?v=SXwC9fSwct8
-https://superuser.com/questions/352289/bash-scripting-test-for-empty-directory
-https://youtu.be/bKFMS5C4CG0?si=t6XwTE0eTTb1fYuq
-https://www.youtube.com/watch?v=BN8lMesmvPw
-https://www.techworld-with-nana.com/post/docker-vs-virtual-machine
+# this is only for the mysqld standalone daemon
+[mysqld]
+port=XXXX <- Add this!
+skip-networking
 ```
 
-AI therapy was leveraged to validate my negative sentiments against 42 subject creators and the classic "here's this random thing we didn't clarify in the subject I guess you fail now" jumpscare characteristic of 42 evaluations.
+Then, you need to change wordpress's configuration so it points to the port you just added.
+
+```
+wp config create --path="$DATA_DIR/wordpress" --config-file="$DATA_DIR/wordpress/wp-config.php" --dbname="wordpress" --dbuser="$DB_USER" --dbpass="$DB_PASS" --locale=en_GB --dbhost="mariadb:3306" <- change this!
+```
+
+If you're going with environment variables, it'll be `--dbhost="mariadb:$DB_PORT"`, else you can also manually specify it.
+
+## Wordpress (PHP)
+
+This is really a PHP container with Wordpress files on it, but yes, "Wordpress container".
+
+This is where my www.conf folder is, it's _probably_ the same on yours.
+
+```
+RUN sed -i "s/127.0.0.1:9000/0.0.0.0:9000/" /etc/php${PHPVER}/php-fpm.d/www.conf
+```
+
+Find the www.conf folder, you should have changed this anyway because the default listens to the `127.0.0.1` localhost, and you wouldn't be able to connect if you didn't change this line, so just change that 9000 to something else.
+
+Make sure you only change the result `0.0.0.0:${WP_PORT}` not the original value `127.0.0.1:${WP_PORT}` <- This is wrong! The default is always 9000.
+
+Then, in your nginx.conf file, change the `fastcgi_pass` param to point to the new port.
+
+```
+fastcgi_pass wordpress:9000; <- Change this!
+```
+
+If you're using environment variables, again, use sed to replace the `fastcgi_pass` line with the `WP_PORT` variable
+
+## Nginx
+
+Good luck have fun. You need to update your domain in wordpress to `https://login.42.fr:XXXX`. Use .env!
+
+In your `nginx.conf` change 443 to the new port. Or, use sed to replace the line with `NGINX_PORT`
+
+```
+	listen 443 ssl; <- Change this!
+	listen [::]:443 ssl; <- Change this!
+```
+
+This part might not work, it's really tricky to change a named port and you absolutely should not anyway. I have not tested this, and I don't want to. I think any evaluator who asks for this is either new to the subject or trying to fail you on purpose.
+
+If it's the latter, just let it go, you don't need to participate in the toxic culture 42 actively promotes in its evaluation system. You won't fail the project if you miss out on this section, though you will miss out on some bonus marks (if you did the bonus)

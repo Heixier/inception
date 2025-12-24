@@ -2,15 +2,7 @@
 
 ## Setting up the environment from scratch
 
-You need to set these variables:
-
-```
-DB_USER - The main administrative account used by wordpress
-DB_PASS - The main administrative password
-WP_USER - The guest user we need to create
-WP_USER_PASS - The password for that guest user
-VOLUMES_PATH - The location of the /data folder for mounting
-```
+You need to set the variables listed in .env.example
 
 ## How to build and launch the project
 
@@ -27,6 +19,7 @@ You need the dockerfiles for each container, specify each container as a service
 ```
 docker compose up --build - start containers and rebuild any changes
 docker compose down - stop containers
+docker compose down -v - stop containers and remove volumes
 docker exec -it name_of_container sh - access a container with sh
 docker volume ls - see all volumes
 docker volume inspect - see details of a specific volume

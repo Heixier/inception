@@ -10,7 +10,7 @@ Just go to the directory with the docker compose file and run `docker compose co
 
 ## Accessing the website
 
-Connect to `rsiah.42.fr` with any modern web browser
+Navigate to `https://rsiah.42.fr`. To access the admin panel and log in, navigate to `https://rsiah.42.fr/wp-admin`
 
 ## Locating and managing credentials
 
