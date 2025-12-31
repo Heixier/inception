@@ -8,8 +8,6 @@ create_wpdatabase()
 	mariadbd --user=mysql --datadir="$DATA_DIR" &
 	DBPID=$!
 
-	sleep 5
-
 	mariadb --user=root <<-EOSQL #ignore leading tabs
 		CREATE DATABASE wordpress;
 		CREATE USER "$DB_USER"@'%' IDENTIFIED BY "$DB_PASS";
