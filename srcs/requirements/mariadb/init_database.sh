@@ -7,6 +7,8 @@ create_wpdatabase()
 	mariadb-install-db --user=mysql --datadir="$DATA_DIR" 
 	mariadbd --user=mysql --datadir="$DATA_DIR" &
 	DBPID=$!
+	
+	sleep 5
 
 	mariadb --user=root <<-EOSQL #ignore leading tabs
 		CREATE DATABASE wordpress;
